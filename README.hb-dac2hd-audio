@@ -1,0 +1,9 @@
+Name:   hb-dac2hd-audio
+Info:   Configures the ALTernative driver for the HifiBerry DAC2 HD audio card.
+        card 0: DAC2HD [HiFiBerry DAC2HD], device 0: HiFiBerry DAC2 HD HiFi
+         pcm1796-hifi-0 [HiFiBerry DAC2 HD HiFi pcm1796-hifi-0]
+        NB. [hw:CARD=DAC2HD]. (Original driver [hw:CARD=sndrpihifiberry])
+Load:   dtoverlay=hb-dac2hd-audio
+Params: <None>
+
+

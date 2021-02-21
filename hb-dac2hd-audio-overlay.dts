@@ -1,0 +1,183 @@
+// SPDX-License-Identifier: GPL-2.0+ OR MIT
+/*
+ * Author: Clive Messer <clive.messer@digitaldreamtime.co.uk>
+ *         Copyright (c) Digital Dreamtime Ltd 2020-2021
+ *
+ * This file is dual-licensed: you can use it either under the terms
+ * of the GPL or the MIT license, at your option. Note that this dual
+ * licensing only applies to this file, and not this project as a
+ * whole.
+ *
+ *  a) This library is free software; you can redistribute it and/or
+ *     modify it under the terms of the GNU General Public License as
+ *     published by the Free Software Foundation; either version 2 of the
+ *     License, or (at your option) any later version.
+ *
+ *     This library is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ * Or, alternatively,
+ *
+ *  b) Permission is hereby granted, free of charge, to any person
+ *     obtaining a copy of this software and associated documentation
+ *     files (the "Software"), to deal in the Software without
+ *     restriction, including without limitation the rights to use,
+ *     copy, modify, merge, publish, distribute, sublicense, and/or
+ *     sell copies of the Software, and to permit persons to whom the
+ *     Software is furnished to do so, subject to the following
+ *     conditions:
+ *
+ *     The above copyright notice and this permission notice shall be
+ *     included in all copies or substantial portions of the Software.
+ *
+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ *     OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+// Definitions for HiFiBerry DAC2 HD
+/dts-v1/;
+/plugin/;
+// #include <dt-bindings/pinctrl/bcm2835.h>
+// #include <dt-bindings/gpio/gpio.h>
+
+/ {
+	compatible = "brcm,bcm2835";
+
+	fragment@0 {
+		target-path = "/clocks";
+		__overlay__ {
+			/* 25MHz reference crystal for si5351a clock gen */
+			dac2hd_osc: dac2hd-osc-ref-25M {
+				#clock-cells = <0>;
+				compatible = "fixed-clock";
+				clock-frequency = <25000000>;
+				clock-output-names = "25MHz-clock";
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <&i2s>;
+		__overlay__ {
+			status = "okay";
+		};
+	};
+
+	fragment@2 {
+		target = <&gpio>;
+		__overlay__ {
+			// MUTE (GPIO:23 PIN:16)
+			pcm1796_pins: pcm1796-pins {
+				brcm,pins = <23>;
+				// brcm,function = <BCM2835_FSEL_GPIO_OUT>;
+				brcm,function = <1>;
+			};
+		};
+	};
+
+	fragment@3 {
+		target = <&i2c1>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			status = "okay";
+
+			/*
+			 * Si5351a msop10 i2c clock generator
+			 *  using custom clk_hifiberry_dac2hd driver
+			 */
+			dac2hd_sclk: dac2hd-si5351a-clock-generator@62 {
+				compatible = "hifiberry,dac2hd-clk";
+				#clock-cells = <0>;
+				reg = <0x62>;
+				clocks = <&dac2hd_osc>;
+				clock-names= "xtal";
+				status = "okay";
+				common_pll_regs = [
+					02 53 03 00 07 20 0F 00
+					10 0D 11 1D 12 0D 13 8C
+					14 8C 15 8C 16 8C 17 8C
+					18 2A 1C 00 1D 0F 1F 00
+					2A 00 2C 00 2F 00 30 00
+					31 00 32 00 34 00 37 00
+					38 00 39 00 3A 00 3B 01
+					3E 00 3F 00 40 00 41 00
+					5A 00 5B 00 95 00 96 00
+					97 00 98 00 99 00 9A 00
+					9B 00 A2 00 A3 00 A4 00
+					B7 92 ];
+				192k_pll_regs = [
+					1A 0C 1B 35 1E F0 20 09
+					21 50 2B 02 2D 10 2E 40
+					33 01 35 22 36 80 3C 22
+					3D 46 ];
+				96k_pll_regs = [
+					1A 0C 1B 35 1E F0 20 09
+					21 50 2B 02 2D 10 2E 40
+					33 01 35 47 36 00 3C 32
+					3D 46 ];
+				48k_pll_regs = [
+					1A 0C 1B 35 1E F0 20 09
+					21 50 2B 02 2D 10 2E 40
+					33 01 35 90 36 00 3C 42
+					3D 46 ];
+				176k4_pll_regs = [
+					1A 3D 1B 09 1E F3 20 13
+					21 75 2B 04 2D 11 2E E0
+					33 02 35 25 36 C0 3C 22
+					3D 7A ];
+				88k2_pll_regs = [
+					1A 3D 1B 09 1E F3 20 13
+					21 75 2B 04 2D 11 2E E0
+					33 01 35 4D 36 80 3C 32
+					3D 7A ];
+				44k1_pll_regs = [
+					1A 3D 1B 09 1E F3 20 13
+					21 75 2B 04 2D 11 2E E0
+					33 01 35 9D 36 00 3C 42
+					3D 7A ];
+			};
+
+			/* TI PCM1796 codec */
+			dac2hd_codec: dac2hd-pcm1796@4c {
+				compatible = "ti,pcm1796";
+				#sound-dai-cells = <0>;
+
+				clocks = <&dac2hd_sclk 0>;
+				clock-names = "sclk";
+
+				pinctrl-names = "default";
+				pinctrl-0 = <&pcm1796_pins>;
+
+				gpio-controller;
+				#gpio-cells = <2>;
+
+				/*
+				 * RESET: GPIO16 (PIN36)
+				 */
+				// reset-gpio = <&gpio 16 GPIO_ACTIVE_LOW>;
+				reset-gpio = <&gpio 16 1>;
+
+				reg = <0x4c>;
+				status = "okay";
+			};
+		};
+	};
+
+	fragment@4 {
+		target = <&sound>;
+		dac2hd: __overlay__ {
+			compatible = "hifiberry,dac2hd";
+			i2s-controller = <&i2s>;
+			status = "okay";
+		};
+	};
+};

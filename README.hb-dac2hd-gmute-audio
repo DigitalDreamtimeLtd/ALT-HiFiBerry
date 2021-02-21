@@ -1,0 +1,23 @@
+Name:   hb-dac2hd-gmute-audio
+Info:   Configures the ALTernative driver for the HifiBerry DAC2 HD audio card.
+        This overlay controls an external mute relay via gpio. By default, it
+	uses gpio 23 (pin 16) but this can be changed using the optional
+	mute_gpio param.
+         eg. "dtoverlay=hb-dac2hd-gmute-audio,mute_gpio=23"
+        The mute gpio is configured active_low and the relay should shunt the
+	analogue outputs to ground when the gpio output is (0V) low. After the
+	PLL clock is configured and the DAC has been reset, the mute gpio will
+	be set high (3.3V), which should cause the relay to remove the shunt to
+        ground. This is the default behaviour. The optional auto_gpio_mute
+	causes gpio relay muting to be applied dynamicaly by the driver when
+        the audio stream is opened/closed.
+         eg. "dtoverlay=hb-dac2hd-gmute-audio,agm"
+        card 0: DAC2HD [HiFiBerry DAC2HD], device 0: HiFiBerry DAC2 HD HiFi
+         pcm1796-hifi-0 [HiFiBerry DAC2 HD HiFi pcm1796-hifi-0]
+        NB. [hw:CARD=DAC2HD]. (Original driver [hw:CARD=sndrpihifiberry])
+Load:   dtoverlay=hb-dac2hd-gmute-audio,<param>=<val>
+Params: mute_gpio               GPIO for MUTE (default 23 (PIN 16))
+        agm                     Automatically use gpio_mute. Default is to
+                                unmute once at startup after PCM1796 reset.
+
+

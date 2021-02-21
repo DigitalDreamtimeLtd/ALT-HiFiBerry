@@ -1,0 +1,51 @@
+Name:   hb-dacplus-gmute-audio
+Info:   Configures the ALTernative driver for the HifiBerry DAC+ audio card.
+        card 0: DACplus [HiFiBerry DACplus], device 0: HiFiBerry DAC+ Pro HiFi
+         zpcm512x-hifi-0 [HiFiBerry DAC+ Pro HiFi zpcm512x-hifi-0]
+        NB. [hw:CARD=DACplus]. (Original driver [hw:CARD=sndrpihifiberry])
+Load:   dtoverlay=hb-dacplus-gmute-audio,<param>=<val>
+Params: 24db_digital_gain       Allow gain to be applied via the PCM512x codec
+                                Digital volume control.
+                                (The default behaviour is that the Digital
+                                volume control is limited to a maximum of
+                                0dB. ie. it can attenuate but not provide
+                                gain. For most users, this will be desired
+                                as it will prevent clipping. By appending
+                                the 24dB_digital_gain parameter, the Digital
+                                volume control will allow up to 24dB of
+                                gain. If this parameter is enabled, it is the
+                                responsibility of the user to ensure that
+                                the Digital volume control is set to a value
+                                that does not result in clipping/distortion!)
+        slave                   Force DAC+ Pro into slave mode, using Pi as
+                                master for bit clock and frame clock.
+        leds_off                If set to 'true' the onboard indicator LEDs
+                                are switched off at all times.
+        mute_gpio               GPIO for MUTE (default 23 (PIN 16))
+        agm                     Automatically use gpio_mute. Default is to
+                                unmute once at startup after PCM512X reset.
+        no_sby                  Prevent the pcm512x from entering standby.
+                                The RQST bit will not be set if this param
+                                is used, which would typically happen
+                                immediately after the ALSA device is closed.
+                                (When the RQST bit is set, the DAC will be
+                                forced into a system standby mode, which is
+                                also the mode the system enters in the case of
+                                clock errors. In this mode, most subsystems
+                                will be powered down but the charge pump and
+                                digital power supply.)
+        no_pdn                  Prevent the pcm512x from powering down.
+                                The RQPD bit will not be set if this param
+                                is used, which would typically happen 5s
+                                after the ALSA device is closed.
+                                (When the RQPD bit is set, the DAC will be
+                                forced into powerdown mode, in which the power
+                                consumption would be minimum as the charge pump
+                                is also powered down. However, it will take
+                                longer to restart from this mode. This mode has
+                                higher precedence than the standby mode, that
+                                is, setting this bit along with the RQST bit
+                                for standby mode will result in the DAC going
+                                into powerdown mode.)
+
+

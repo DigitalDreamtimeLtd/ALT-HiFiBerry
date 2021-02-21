@@ -1,0 +1,112 @@
+// SPDX-License-Identifier: GPL-2.0+ OR MIT
+/*
+ * Author: Clive Messer <clive.messer@digitaldreamtime.co.uk>
+ *         Copyright (c) Digital Dreamtime Ltd 2016-2021
+ *
+ * This file is dual-licensed: you can use it either under the terms
+ * of the GPL or the MIT license, at your option. Note that this dual
+ * licensing only applies to this file, and not this project as a
+ * whole.
+ *
+ *  a) This library is free software; you can redistribute it and/or
+ *     modify it under the terms of the GNU General Public License as
+ *     published by the Free Software Foundation; either version 2 of the
+ *     License, or (at your option) any later version.
+ *
+ *     This library is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ * Or, alternatively,
+ *
+ *  b) Permission is hereby granted, free of charge, to any person
+ *     obtaining a copy of this software and associated documentation
+ *     files (the "Software"), to deal in the Software without
+ *     restriction, including without limitation the rights to use,
+ *     copy, modify, merge, publish, distribute, sublicense, and/or
+ *     sell copies of the Software, and to permit persons to whom the
+ *     Software is furnished to do so, subject to the following
+ *     conditions:
+ *
+ *     The above copyright notice and this permission notice shall be
+ *     included in all copies or substantial portions of the Software.
+ *
+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ *     OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+// Definitions for HiFiBerry DAC+
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "brcm,bcm2835";
+
+	fragment@0 {
+		target-path = "/";
+		__overlay__ {
+			dacpluspro_clk: dacpluspro-clk {
+				compatible = "hifiberry,dacpluspro-clk";
+				#clock-cells = <0>;
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <&i2s>;
+		__overlay__ {
+			status = "okay";
+		};
+	};
+
+	fragment@2 {
+		target = <&i2c1>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			status = "okay";
+
+			dacplus_codec: dacplus-pcm5122@4d {
+				#sound-dai-cells = <0>;
+				compatible = "ti,zpcm5122";
+				reg = <0x4d>;
+				clocks = <&dacpluspro_clk>;
+				clock-names = "sclk";
+				AVDD-supply = <&vdd_3v3_reg>;
+				DVDD-supply = <&vdd_3v3_reg>;
+				CPVDD-supply = <&vdd_3v3_reg>;
+				status = "okay";
+			};
+			dacplus_hpamp: dacplus-hpamp@60 {
+				compatible = "ti,tpa6130a2";
+				reg = <0x60>;
+				status = "disabled";
+			};
+		};
+	};
+
+	fragment@3 {
+		target = <&sound>;
+		hifiberry_dacplus: __overlay__ {
+			compatible = "hifiberry,dacplus";
+			i2s-controller = <&i2s>;
+			status = "okay";
+		};
+	};
+
+	__overrides__ {
+		24db_digital_gain =
+			<&hifiberry_dacplus>,"hifiberry,24db_digital_gain?";
+		slave = <&hifiberry_dacplus>,"hifiberry-dacplus,slave?";
+		leds_off = <&hifiberry_dacplus>,"hifiberry-dacplus,leds_off?";
+		no_pdn = <&dacplus_codec>,"pcm512x,disable-pwrdown?";
+		no_sby = <&dacplus_codec>,"pcm512x,disable-standby?";
+	};
+};
