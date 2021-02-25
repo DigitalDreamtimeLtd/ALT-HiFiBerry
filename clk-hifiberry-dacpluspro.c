@@ -26,6 +26,8 @@
 #include <linux/slab.h>
 #include <linux/platform_device.h>
 
+#define DRV_VERSION "4.0.0"
+
 /* Clock rate of CLK44EN attached to GPIO6 pin */
 #define CLK_44EN_RATE 22579200UL
 /* Clock rate of CLK48EN attached to GPIO3 pin */
@@ -191,6 +193,7 @@ static void __exit clk_hb_dacpluspro_exit(void)
 }
 module_exit(clk_hb_dacpluspro_exit);
 
+MODULE_VERSION(DRV_VERSION);
 MODULE_DESCRIPTION("ALTernative HiFiBerry DAC+ Pro clock driver");
 MODULE_AUTHOR("Stuart MacLean");
 MODULE_AUTHOR("Clive Messer <clive.messer@digitaldreamtime.co.uk>");

@@ -28,6 +28,8 @@
 #include <linux/i2c.h>
 #include <linux/regmap.h>
 
+#define DRV_VERSION "5.2.1"
+
 #define CLK_DAC2HD_NO_PLL_RESET		0
 #define CLK_DAC2HD_PLL_RESET		1
 #define CLK_DAC2HD_PLL_MAX_REGISTER	256
@@ -664,6 +666,7 @@ static struct i2c_driver clk_hb_dac2hd_i2c_drv = {
 };
 module_i2c_driver(clk_hb_dac2hd_i2c_drv);
 
+MODULE_VERSION(DRV_VERSION);
 MODULE_DESCRIPTION("ALTernative HiFiBerry DAC2 HD clock driver");
 MODULE_AUTHOR("Joerg Schambacher <joerg@i2audio.com>");
 MODULE_AUTHOR("Clive Messer <clive.messer@digitaldreamtime.co.uk>");

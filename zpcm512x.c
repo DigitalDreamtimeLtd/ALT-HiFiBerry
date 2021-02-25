@@ -28,6 +28,8 @@
 #include "zpcm512x.h"
 #include "dd-utils.h"
 
+#define DRV_VERSION "4.0.0"
+
 #ifdef PCM512X_GPIO_ACTIVE_HIGH
 #define PCM512X_GPIOD_OUT_LOW	GPIOD_OUT_LOW
 #else /* Pi gpio default is active_low, so need to set logical high */
@@ -2415,6 +2417,7 @@ const struct dev_pm_ops zpcm512x_pm_ops = {
 };
 EXPORT_SYMBOL_GPL(zpcm512x_pm_ops);
 
+MODULE_VERSION(DRV_VERSION);
 MODULE_DESCRIPTION("ALTernative ASoC PCM512x codec driver");
 MODULE_AUTHOR("Mark Brown <broonie@kernel.org>");
 MODULE_AUTHOR("Clive Messer <clive.messer@digitaldreamtime.co.uk>");

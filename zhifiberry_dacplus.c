@@ -42,21 +42,21 @@
 
 #include "zpcm512x.h"
 
+#define DRV_VERSION "4.0.0"
+
 #define HIFIBERRY_DACPRO_NOCLOCK 0
 #define HIFIBERRY_DACPRO_CLK44EN 1
 #define HIFIBERRY_DACPRO_CLK48EN 2
-
-struct zpcm512x_priv {
-	struct regmap *regmap;
-	struct clk *sclk;
-};
 
 /* Clock rate of CLK44EN attached to GPIO6 pin */
 #define CLK_44EN_RATE 22579200UL
 /* Clock rate of CLK48EN attached to GPIO3 pin */
 #define CLK_48EN_RATE 24576000UL
 
-//#define DRIVERVERSION "v5.1280_EXT"
+struct zpcm512x_priv {
+	struct regmap *regmap;
+	struct clk *sclk;
+};
 
 static bool slave;
 static bool snd_rpi_hb_is_dacpro;
@@ -858,7 +858,7 @@ static struct platform_driver dacplus_platform_drv = {
 };
 module_platform_driver(dacplus_platform_drv);
 
-//MODULE_VERSION(DRIVERVERSION);
+MODULE_VERSION(DRV_VERSION);
 MODULE_AUTHOR("Daniel Matuschek <daniel@hifiberry.com>");
 MODULE_AUTHOR("Clive Messer <clive.messer@digitaldreamtime.co.uk>");
 MODULE_DESCRIPTION("ALTernative ASoC Driver for HiFiBerry DAC+");

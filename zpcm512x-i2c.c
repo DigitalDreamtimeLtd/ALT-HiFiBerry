@@ -16,6 +16,8 @@
 
 #include "zpcm512x.h"
 
+#define DRV_VERSION "4.0.0"
+
 static int zpcm512x_i2c_probe(struct i2c_client *client,
 			      const struct i2c_device_id *id)
 {
@@ -107,6 +109,7 @@ static struct i2c_driver zpcm512x_i2c_drv = {
 };
 module_i2c_driver(zpcm512x_i2c_drv);
 
+MODULE_VERSION(DRV_VERSION);
 MODULE_DESCRIPTION("ALTernative ASoC PCM512x codec driver - I2C");
 MODULE_AUTHOR("Mark Brown <broonie@kernel.org>");
 MODULE_AUTHOR("Clive Messer <clive.messer@digitaldreamtime.org.uk>");

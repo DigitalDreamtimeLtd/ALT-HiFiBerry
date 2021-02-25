@@ -37,6 +37,8 @@
 
 #include "pcm1796.h"
 
+#define DRV_VERSION "5.2.1"
+
 #define DEFAULT_RATE	44100
 #define BCLK_RATIO	64
 
@@ -371,6 +373,7 @@ static struct platform_driver dac2hd_platform_drv = {
 };
 module_platform_driver(dac2hd_platform_drv);
 
+MODULE_VERSION(DRV_VERSION);
 MODULE_AUTHOR("Joerg Schambacher <joerg@i2audio.com>");
 MODULE_AUTHOR("Clive Messer <clive.messer@digitaldreamtime.co.uk>");
 MODULE_DESCRIPTION("ALTernative ASoC Driver for HiFiBerry DAC2 HD");

@@ -16,6 +16,8 @@
 
 #include "pcm1796.h"
 
+#define DRV_VERSION "5.2.1"
+
 static int pcm1796_i2c_probe(struct i2c_client *client,
 			     const struct i2c_device_id *id)
 {
@@ -80,6 +82,7 @@ static struct i2c_driver pcm1796_i2c_drv = {
 };
 module_i2c_driver(pcm1796_i2c_drv);
 
+MODULE_VERSION(DRV_VERSION);
 MODULE_DESCRIPTION("ALTernative ASoC PCM1796 codec driver - I2C");
 MODULE_AUTHOR("Jacob Siverskog <jacob@teenage.engineering>");
 MODULE_AUTHOR("Clive Messer <clive.messer@digitaldreamtime.co.uk>");

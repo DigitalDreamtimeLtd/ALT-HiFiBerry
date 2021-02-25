@@ -19,6 +19,8 @@
 
 //#include <linux/module.h>
 
+//#define DRV_VERSION "1.0.0"
+
 #ifdef DDEBUG
 char* dd_utils_log_daifmt_format(unsigned int format)
 {
@@ -91,6 +93,7 @@ char* dd_utils_log_daifmt_master(unsigned int format)
 //EXPORT_SYMBOL_GPL(dd_utils_log_daifmt_master);
 #endif /* DDEBUG */
 
+//MODULE_VERSION(DRV_VERSION);
 //MODULE_DESCRIPTION("Digital Dreamtine ASoC Utils");
 //MODULE_AUTHOR("Clive Messer <clive.messer@digitaldreamtime.co.uk>");
 //MODULE_LICENSE("GPL");

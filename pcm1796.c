@@ -29,6 +29,8 @@
 #include "pcm1796.h"
 #include "dd-utils.h"
 
+#define DRV_VERSION "5.2.1"
+
 #ifdef PCM1796_GPIO_ACTIVE_HIGH
 #define PCM1796_GPIOD_OUT_LOW	GPIOD_OUT_LOW
 #else /* Pi gpio default is active_low, so need to set logical high */
@@ -895,6 +897,7 @@ void pcm1796_remove(struct device *dev)
 }
 EXPORT_SYMBOL_GPL(pcm1796_remove);
 
+MODULE_VERSION(DRV_VERSION);
 MODULE_DESCRIPTION("ALTernative ASoC PCM1796 codec driver");
 MODULE_AUTHOR("Michael Trimarchi <michael@amarulasolutions.com>");
 MODULE_AUTHOR("Clive Messer <clive.messer@digitaldreamtime.co.uk>");
