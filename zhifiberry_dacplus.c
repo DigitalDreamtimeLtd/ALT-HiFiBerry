@@ -651,33 +651,39 @@ static int snd_rpi_hb_dacplus_probe(struct platform_device *pdev)
 		return ret;
 	}
 	if (ret) {
-		dacplus_card.aux_dev = dacplus_aux_devs;
-		dacplus_card.num_aux_devs = ARRAY_SIZE(dacplus_aux_devs);
 		tpa_node = of_find_compatible_node(NULL, NULL, "ti,tpa6130a2");
 		tpa_prop = of_find_property(tpa_node, "status", &len);
-
-		if (strcmp((char *)tpa_prop->value, "okay")) {
-			/* and activate headphone using change_sets */
-			dev_info(dev, "%s: activating headphone amplifier\n",
-				 __func__);
-			of_changeset_init(&ocs);
-			ret = of_changeset_update_property(&ocs, tpa_node,
-							   &tpa_enable_prop);
-			if (ret) {
-				ret = -ENODEV;
-				dev_err(dev, "%s: error activating headphone "
-					"amplifier: returning [-ENODEV]\n",
-					__func__);
-				goto tpa_err;
+		if (tpa_prop) {
+			dacplus_card.aux_dev = dacplus_aux_devs;
+			dacplus_card.num_aux_devs = ARRAY_SIZE(dacplus_aux_devs);
+			if (strcmp((char *)tpa_prop->value, "okay")) {
+				/* and activate headphone using change_sets */
+				dev_info(&pdev->dev, "%s: activating headphone "
+					 "amplifier\n", __func__);
+				of_changeset_init(&ocs);
+				ret = of_changeset_update_property(&ocs,
+						tpa_node, &tpa_enable_prop);
+				if (ret) {
+					ret = -ENODEV;
+					dev_err(dev, "%s: cannot activate "
+						"headphone amplifier: "
+						"returning [-ENODEV]\n",
+						__func__);
+					goto tpa_err;
+				}
+				ret = of_changeset_apply(&ocs);
+				if (ret) {
+					ret = -ENODEV;
+					dev_err(dev, "%s: cannot activate "
+						"headphone amplifier: "
+						"returning [-ENODEV]\n",
+						__func__);
+					goto tpa_err;
+				}
 			}
-			ret = of_changeset_apply(&ocs);
-			if (ret) {
-				ret = -ENODEV;
-				dev_err(dev, "%s: error activating headphone "
-					"amplifier: returning [-ENODEV]\n",
-					__func__);
-				goto tpa_err;
-			}
+		} else {
+			dev_warn(dev, "%s: I2C-device (at 0x60) detected! "
+				 "Wrong overlay?\n", __func__);
 		}
 	}
 #ifdef DDEBUG
